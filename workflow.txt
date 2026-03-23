@@ -1,0 +1,24 @@
+Sentinel 2 workflow using CDSE OData Python 
+
+Updated 23 March 2026
+
+1. Find features by tile ID and date
+2. Iterate through features to check for L1C processing level and < 30% cloud cover. Check for early features with N0500 to remove duplicates
+3. Identify features that meet above criteria and download S2 L1C
+4. Mask out land, fjords, skerries, and shallow, near-shore waters
+5. Check TOA reflectance of unmasked area before using Acolite. Reject image if any checks fail
+	Checks: 
+	1. Scene size - reject small, partial tiles 
+	2. Clouds (B10) 
+	3. Ice (B4) 
+	
+6. Use Acolite to apply sunglint correction and to compute Rayleigh-corrected reflectance (Rrc) in bands 2-4, 8, and 11
+7. Use resulting netCDF files to compute NDVI, EVI, FAI
+8. Limit search for floating macroalgae to shelf and offshore waters. Mask out land, fjords, skerries, and shallow, near-shore waters
+9. Create binary images by applying thresholds to vegetation indices
+10. Find connected pixels - reject single pixels - perhaps apply area threshold?
+11. Use GEBCO bathymetry to find depth over which macroalgae were floating
+12. Generate general metadata: S2 scene ID, Date & time, Acolite version & settings, Reflectance product used, Vegetation index used, Threshold applied, Area threshold applied to binary image.     
+13. Write output file: general metadata, macroalgae lat/lon, patch area, depth
+14. Visual checks: check for false positives around cloud edges and cloud shadows
+15. Delete L1C?
