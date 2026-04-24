@@ -1,3 +1,5 @@
+![Sentinel-2 RGB Image of Islands in South Greenland](images/SGreenland_RGB.png)
+
 Sentinel 2 workflow using CDSE OData Python 
 
 Updated 23 March 2026
