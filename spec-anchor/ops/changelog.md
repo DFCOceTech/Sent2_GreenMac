@@ -2,6 +2,13 @@
 
 Rolling 2-week work log.
 
+## 2026-04-26 (7)
+- REQ-RRC-009: Step 4 auto-discovers *_RRC.nc files under acolite_out
+  - Config cell: recursive glob, prints indexed list, selected_rrc_indices (None=all)
+  - Execution cell: loops over selected files, derives analysis_out per scene
+  - filter_size moved from hardcoded in execution cell to config cell
+  - Updated rrc-post-processing spec: REQ-RRC-009, SCENARIO-RRC-008
+
 ## 2026-04-26 (6)
 - Bug fix: cloud mask skipped for S2A scenes — band named rhot_1375 in mask_config.yml
   but SAFE metadata shows S2A B10 centre = 1373.5 nm → ACOLITE writes rhot_1374

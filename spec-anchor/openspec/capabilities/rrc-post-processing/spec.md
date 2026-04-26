@@ -1,6 +1,6 @@
 # RRC Post-Processing — Specification
 
-> Version: 1.1 | Status: Done | Last updated: 2026-04-26
+> Version: 1.2 | Status: Done | Last updated: 2026-04-26
 
 ## Purpose
 
@@ -50,6 +50,13 @@ Output filenames SHALL be derived from the input `_RRC.nc` basename:
 | RGB    | `_RGB.tif`      |
 | NDVI   | `_NDVI.tif`     |
 | FAI    | `_FAI.tif`      |
+
+### REQ-RRC-009: Auto-discovery of RRC files
+The Step 4 config cell SHALL discover all `*_RRC.nc` files under `acolite_out`
+using a recursive glob and print them with numeric indices.  The execution cell
+SHALL process the files indicated by `selected_rrc_indices` (list of indices),
+or all files if `selected_rrc_indices` is `None`.  Output GeoTIFFs and the
+patch report are written into each file's own directory.
 
 ### REQ-RRC-008: SWIR-based land mask supplement
 `compute_indices` SHALL compute a land mask by thresholding the unfiltered
@@ -105,9 +112,15 @@ the `transverse_mercator` variable in the source NetCDF
 
 ### SCENARIO-RRC-007: SWIR land mask excludes land from FAI patches
 **GIVEN** an RRC file where `mask_combined` contains no land component  
-**WHEN** `compute_indices` runs with default `swir_land_threshold=0.035`  
+**WHEN** `compute_indices` runs with default `swir_land_threshold=0.008`  
 **THEN** `mask_combined` in the returned dict has land pixels set to True,
 and no FAI patches in the report are located over land
+
+### SCENARIO-RRC-008: Auto-discovery finds all processed scenes
+**GIVEN** two `_RRC.nc` files in separate per-scene subdirectories under `acolite_out`  
+**WHEN** the Step 4 config cell runs  
+**THEN** both files are listed with indices and both are processed when
+`selected_rrc_indices = None`
 
 ## Implementation Status (2026-04-26)
 
@@ -118,7 +131,8 @@ and no FAI patches in the report are located over land
 - `write_rgb_geotiff` — 3-band unmasked RGB GeoTIFF; S2A/S2B green auto-detected
 - `compute_indices` — median filter → NDVI + FAI; SWIR land mask OR-combined with embedded mask_combined (REQ-RRC-008)
 - `write_index_geotiff` — masked single-band float32 GeoTIFF
-- Step 4 config cell: exposes `swir_land_threshold` (default 0.035)
+- Step 4 config cell: recursive glob for `*_RRC.nc` under `acolite_out`; `selected_rrc_indices` to filter; `filter_size`, `swir_land_threshold`, `context_margin` all configurable (REQ-RRC-009)
+- Step 4 execution cell: loops over selected files, writes outputs into each scene's directory
 - Dependency fix: recompiled `$JRE/lib/libiconv.2.dylib` wrapper to also
   export `_locale_charset`, unblocking rasterio/libspatialite on macOS ARM64
 
