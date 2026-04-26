@@ -1,6 +1,6 @@
 # RRC Post-Processing — Specification
 
-> Version: 1.0 | Status: In Progress | Last updated: 2026-04-14
+> Version: 1.1 | Status: Done | Last updated: 2026-04-26
 
 ## Purpose
 
@@ -51,6 +51,15 @@ Output filenames SHALL be derived from the input `_RRC.nc` basename:
 | NDVI   | `_NDVI.tif`     |
 | FAI    | `_FAI.tif`      |
 
+### REQ-RRC-008: SWIR-based land mask supplement
+`compute_indices` SHALL compute a land mask by thresholding the unfiltered
+SWIR band (`rhorc_1614` for S2A, `rhorc_1610` for S2B) at
+`swir_land_threshold` (default 0.035).  This mask SHALL be OR-combined with
+the `mask_combined` variable read from the RRC file before any indices or
+GeoTIFFs are written.  The SWIR mask is computed on the raw (pre-filter) SWIR
+to preserve sharp land/water boundaries.  The threshold is exposed as a
+configurable parameter in the Step 4 config cell.
+
 ## Acceptance Scenarios
 
 ### SCENARIO-RRC-001: RGB GeoTIFF is unmasked
@@ -86,16 +95,22 @@ unfiltered equivalents (verified by max-abs comparison or visual inspection)
 **THEN** `rasterio.open(out_path).crs.wkt` matches the `crs_wkt` attribute of
 the `transverse_mercator` variable in the source NetCDF
 
-## Implementation Status (2026-04-14)
+### SCENARIO-RRC-007: SWIR land mask excludes land from FAI patches
+**GIVEN** an RRC file where `mask_combined` contains no land component  
+**WHEN** `compute_indices` runs with default `swir_land_threshold=0.035`  
+**THEN** `mask_combined` in the returned dict has land pixels set to True,
+and no FAI patches in the report are located over land
 
-**Status**: In Progress
+## Implementation Status (2026-04-26)
+
+**Status**: Done
 
 ### What's Built
 - `_build_geotiff_profile` — derives CRS + affine transform from RRC NetCDF
-- `write_rgb_geotiff` — 3-band unmasked RGB GeoTIFF
-- `compute_indices` — median filter → NDVI + FAI with NaN guard
+- `write_rgb_geotiff` — 3-band unmasked RGB GeoTIFF; S2A/S2B green auto-detected
+- `compute_indices` — median filter → NDVI + FAI; SWIR land mask OR-combined with embedded mask_combined (REQ-RRC-008)
 - `write_index_geotiff` — masked single-band float32 GeoTIFF
-- Step 4 config and execution cells in `CDSE_OData_Workflow_v1.ipynb`
+- Step 4 config cell: exposes `swir_land_threshold` (default 0.035)
 - Dependency fix: recompiled `$JRE/lib/libiconv.2.dylib` wrapper to also
   export `_locale_charset`, unblocking rasterio/libspatialite on macOS ARM64
 

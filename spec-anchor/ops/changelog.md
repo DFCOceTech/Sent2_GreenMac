@@ -2,6 +2,18 @@
 
 Rolling 2-week work log.
 
+## 2026-04-26 (4)
+- Bug fix: land pixels appearing in FAI patch report
+  - Root cause: `mask_combined` in the existing RRC file contained only the ice_bright
+    mask (cloud and land masks were skipped during initial processing due to wrong
+    fallback bands in mask_config.yml, now fixed)
+  - Fix: `compute_indices` now computes a SWIR-based land mask (unfiltered SWIR >
+    `swir_land_threshold`) and OR-combines it with the embedded `mask_combined` before
+    returning; the enriched mask propagates automatically to GeoTIFFs, FAI binary image,
+    connected components, and the patch report
+  - `swir_land_threshold = 0.035` added to Step 4 config cell; passed to `compute_indices`
+  - Added REQ-RRC-008 and SCENARIO-RRC-007 to rrc-post-processing spec
+
 ## 2026-04-26 (3)
 - Bug fix: S2A/S2B band name differences in Step 4 and masking
   - `write_rgb_geotiff`: green band now auto-detected from filename — `rhorc_560` (S2A) or `rhorc_559` (S2B)
