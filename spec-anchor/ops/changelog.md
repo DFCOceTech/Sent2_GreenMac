@@ -2,6 +2,16 @@
 
 Rolling 2-week work log.
 
+## 2026-04-26
+- S03-01: introduced `secrets_config.yml` pattern for credentials and local paths
+  - Created `secrets_config.yml` (gitignored) with CDSE, Earthdata credentials and local paths
+  - Created `secrets_config.yml.example` (committed) as onboarding template
+  - Created `.gitignore` (excludes `secrets_config.yml`, `.DS_Store`, `.ipynb_checkpoints/`)
+  - Added `secrets-load-cc` cell to notebook (after imports): loads YAML and assigns all variables
+  - Stripped `config-cc` of `username`, `password`, `download_path`
+  - Stripped `acolite-config-cc` of `earthdata_user`, `earthdata_pass`, `acolite_dir`, `acolite_out`, `mask_config_path`
+  - Created openspec capability `secrets-config`, Story S03-01, Epic 03
+
 ## 2026-04-25
 - Fixed missed credential leak: `earthdata_pass` placeholder was a real NASA Earthdata password in `acolite-config-cc` — replaced with `'your_earthdata_password'`
 - S02-02: added FAI patch detection to Step 4 of `CDSE_OData_Workflow_v1.ipynb`

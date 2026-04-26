@@ -21,6 +21,11 @@
 - Combined mask applied to NDVI and FAI outputs; RGB intentionally unmasked
 - Verified on `T22WDS_L2R_RRC.nc`: all acceptance criteria pass
 
+### What's Working (updated 2026-04-26)
+- `secrets_config.yml` pattern: all credentials and local paths loaded from gitignored file
+- `.gitignore` excludes `secrets_config.yml`, `.DS_Store`, `.ipynb_checkpoints/`
+- `secrets_config.yml.example` documents schema for new users
+
 ### What's Working (updated 2026-04-25)
 - FAI patch detection in Step 4: `compute_fai_patches` thresholds masked FAI, labels 4-connected components, filters by area
 - `write_fai_report` writes `%`-header + CSV (num, longitude, latitude, area) keyed to `lon`/`lat` from RRC NetCDF
