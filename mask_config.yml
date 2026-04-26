@@ -1,0 +1,31 @@
+# Mask thresholds for Sentinel-2 L2R post-processing.
+# Edit values here to tune sensitivity without modifying the notebook.
+#
+# Each mask section specifies:
+#   band          : variable name to read from the ACOLITE L2R NetCDF
+#   fallback_band : used if the primary band is absent (e.g. 1375 nm not in file)
+#   threshold     : pixels with reflectance > threshold are flagged as masked
+#
+# Reference values:
+#   cloud    : rhot_1375 > 0.025  (Sentinel-2 cirrus band; Vermote et al. 2016)
+#   land     : rhos_1614 > 0.05   (SWIR1 land/water contrast; Vanhellemont 2019)
+#   ice/bright: rhorc_665 > 0.25  (red-band bright target threshold)
+
+cloud:
+  band: rhot_1375           # S2A B10 (1375 nm cirrus), TOA reflectance
+  fallback_band: rhot_1377  # S2B B10 (1377 nm cirrus) — slightly different centre wavelength
+  threshold: 0.003
+
+land:
+  band: rhorc_1614           # S2A B11 SWIR1 Rayleigh-corrected reflectance
+  fallback_band: rhorc_1610  # S2B B11 SWIR1 — slightly different centre wavelength
+  threshold: 0.035
+
+ice_bright:
+  band: rhorc_665           # B4 red Rayleigh-corrected reflectance
+  fallback_band: rhos_665   # DSF surface reflectance as fallback
+  threshold: 0.03
+
+dilation:
+  apply: true               # dilate the combined mask boundary
+  pixels: 3                 # half-width of square structuring element (side = 2N+1)

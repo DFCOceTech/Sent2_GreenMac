@@ -13,7 +13,8 @@ to suppress salt-and-pepper noise from whitecaps and specular glint residuals.
 
 ### REQ-RRC-001: Unmasked RGB GeoTIFF
 The system SHALL write a 3-band float32 GeoTIFF from `rhorc_665` (red),
-`rhorc_560` (green), and `rhorc_492` (blue), with no mask applied.
+`rhorc_492` (blue), and the green band auto-detected from the filename:
+`rhorc_560` for S2A, `rhorc_559` for S2B.  No mask is applied.
 
 ### REQ-RRC-002: 7×7 median filter
 The system SHALL apply a 7×7 median filter (scipy `median_filter`, `size=7`)
@@ -26,9 +27,11 @@ Pixels where either band is ≤ 0 SHALL yield NaN (nodata guard).
 ### REQ-RRC-004: FAI computation
 The system SHALL compute the Floating Algae Index (Hu 2009) as:
 
-    FAI = rhorc_833 − [rhorc_665 + (rhorc_1614 − rhorc_665) × (833−665)/(1614−665)]
+    FAI = rhorc_833 − [rhorc_665 + (rhorc_SWIR − rhorc_665) × (833−665)/(wl_SWIR−665)]
 
-where `rhorc_665`, `rhorc_833`, and `rhorc_1614` are the median-filtered arrays.
+where SWIR band and wavelength are auto-detected from the filename:
+`rhorc_1614` / 1614 nm for S2A; `rhorc_1610` / 1610 nm for S2B.
+`rhorc_665`, `rhorc_833`, and the SWIR band are the median-filtered arrays.
 
 ### REQ-RRC-005: Combined mask applied to indices
 The system SHALL apply `mask_combined` from the RRC file to NDVI and FAI

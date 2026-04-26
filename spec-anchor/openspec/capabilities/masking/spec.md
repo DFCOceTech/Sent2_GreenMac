@@ -1,6 +1,6 @@
 # Masking — Specification
 
-> Version: 1.0 | Status: Implemented | Last updated: 2026-04-11
+> Version: 1.1 | Status: Implemented | Last updated: 2026-04-26
 
 ## Purpose
 
@@ -11,13 +11,14 @@ the output file or saved separately.
 ## Functional Requirements
 
 ### REQ-MASK-001: Cloud mask
-The system SHALL compute a cloud mask by thresholding TOA reflectance at
-1375 nm (`rhot_1375`).  If 1375 nm is absent, it SHALL fall back to
-`rhot_1614` and warn the user.
+The system SHALL compute a cloud mask by thresholding TOA reflectance at the
+cirrus band: `rhot_1375` (S2A B10) or `rhot_1377` (S2B B10).  The primary
+and fallback band names are read from `mask_config.yml`.
 
 ### REQ-MASK-002: Land mask
-The system SHALL compute a land mask by thresholding L2R SWIR reflectance
-(`rhos_1614`), with `rhorc_1614` as a fallback.
+The system SHALL compute a land mask by thresholding Rayleigh-corrected SWIR
+reflectance: `rhorc_1614` (S2A B11) or `rhorc_1610` (S2B B11).  Primary and
+fallback band names are read from `mask_config.yml`.
 
 ### REQ-MASK-003: Ice / bright-pixel mask
 The system SHALL compute an ice/bright mask by thresholding Rayleigh-
@@ -50,10 +51,10 @@ nearest-neighbour interpolation before combining.
 
 ## Acceptance Scenarios
 
-### SCENARIO-MASK-001: Cloud mask fallback
-**GIVEN** `rhot_1375` is absent from the L2R NetCDF  
+### SCENARIO-MASK-001: Cloud mask S2B fallback
+**GIVEN** an S2B L2R file where `rhot_1375` is absent but `rhot_1377` is present  
 **WHEN** `compute_cloud_mask` runs  
-**THEN** `rhot_1614` is used and a WARNING is printed; no exception is raised
+**THEN** `rhot_1377` is used and a WARNING is printed; no exception is raised
 
 ### SCENARIO-MASK-002: All masks absent
 **GIVEN** none of the configured bands are in the L2R file  
@@ -84,7 +85,7 @@ nearest-neighbour interpolation before combining.
 - `mask_config.yml` with documented default thresholds
 
 ### Deviations from Spec
-- None
+- REQ-MASK-001/002 updated 2026-04-26 to reflect S2A/S2B band differences (bug fix)
 
 ### Deferred
 - None

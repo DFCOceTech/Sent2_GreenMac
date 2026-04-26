@@ -2,6 +2,14 @@
 
 Rolling 2-week work log.
 
+## 2026-04-26 (3)
+- Bug fix: S2A/S2B band name differences in Step 4 and masking
+  - `write_rgb_geotiff`: green band now auto-detected from filename — `rhorc_560` (S2A) or `rhorc_559` (S2B)
+  - `compute_indices`: SWIR band (`rhorc_1614` / `rhorc_1610`) and FAI baseline wavelength (1614 / 1610 nm) now auto-detected
+  - `mask_config.yml` cloud fallback: was `rhot_1614` (wrong), now `rhot_1377` (S2B cirrus band)
+  - `mask_config.yml` land fallback: was `rhorc_2202` (SWIR2, wrong), now `rhorc_1610` (S2B SWIR1)
+  - Updated rrc-post-processing spec REQ-RRC-001 and REQ-RRC-004; masking spec REQ-MASK-001/002 and SCENARIO-MASK-001
+
 ## 2026-04-26 (2)
 - S01-01: per-scene ACOLITE output directories
   - Added `scene_output_dir(acolite_out, l1c)` helper: parses sat/date/tile from SAFE name → `{sat}_{yyyymmdd}_{tile}`
