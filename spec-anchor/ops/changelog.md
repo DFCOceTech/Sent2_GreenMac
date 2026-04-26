@@ -2,6 +2,17 @@
 
 Rolling 2-week work log.
 
+## 2026-04-26 (2)
+- S01-01: per-scene ACOLITE output directories
+  - Added `scene_output_dir(acolite_out, l1c)` helper: parses sat/date/tile from SAFE name → `{sat}_{yyyymmdd}_{tile}`
+  - Replaced `acolite_output_dir` (used full product ID) with `scene_output_dir`
+  - Updated `find_l2r_files` to search per-scene subdir first, recursive glob fallback
+  - Removed `output={acolite_out}` from `set_str`; written as `output={scene_out}` per-iteration in run cell
+  - Fixed hardcoded product name in `acolite-run-cc` → `.SAFE`
+  - Fixed `dd8af76b` post-processing cell: now loops `l1c_dirs`, uses `find_l2r_files` (flat glob removed)
+  - Updated `secrets_config.yml`: `acolite_out` now points to root output dir (not a scene subdir)
+  - Created Epic 01, Story S01-01; updated ACOLITE spec with REQ-ACOL-006 and two new scenarios
+
 ## 2026-04-26
 - S03-01: introduced `secrets_config.yml` pattern for credentials and local paths
   - Created `secrets_config.yml` (gitignored) with CDSE, Earthdata credentials and local paths

@@ -21,6 +21,10 @@
 - Combined mask applied to NDVI and FAI outputs; RGB intentionally unmasked
 - Verified on `T22WDS_L2R_RRC.nc`: all acceptance criteria pass
 
+### What's Working (updated 2026-04-26, update 2)
+- Per-scene ACOLITE output: each scene written to `{acolite_out}/{sat}_{yyyymmdd}_{tile}/`
+- Post-processing loops all scenes in `l1c_dirs`; `find_l2r_files` uses per-scene subdir
+
 ### What's Working (updated 2026-04-26)
 - `secrets_config.yml` pattern: all credentials and local paths loaded from gitignored file
 - `.gitignore` excludes `secrets_config.yml`, `.DS_Store`, `.ipynb_checkpoints/`
