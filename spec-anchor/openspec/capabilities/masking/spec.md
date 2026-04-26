@@ -13,7 +13,7 @@ the output file or saved separately.
 ### REQ-MASK-001: Cloud mask
 The system SHALL compute a cloud mask by thresholding TOA reflectance at the
 cirrus band.  ACOLITE names the band from the sensor metadata centre wavelength
-rounded to the nearest integer: `rhot_1374` for S2A (centre 1373.5 nm) and
+truncated to integer: `rhot_1373` for S2A (centre 1373.5 nm) and
 `rhot_1377` for S2B (centre ~1376.9 nm).  Primary and fallback band names are
 read from `mask_config.yml`.
 

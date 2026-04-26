@@ -12,7 +12,7 @@
 #   ice/bright: rhorc_665 > 0.25  (red-band bright target threshold)
 
 cloud:
-  band: rhot_1374           # S2A B10 (centre 1373.5 nm → ACOLITE rounds to 1374)
+  band: rhot_1373           # S2A B10 (centre 1373.5 nm → ACOLITE truncates to 1373)
   fallback_band: rhot_1377  # S2B B10 (centre ~1376.9 nm → ACOLITE rounds to 1377)
   threshold: 0.003
 
