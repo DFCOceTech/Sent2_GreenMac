@@ -1,6 +1,6 @@
 # FAI Patch Detection — Specification
 
-> Version: 1.0 | Status: Done | Last updated: 2026-04-25
+> Version: 1.1 | Status: Done | Last updated: 2026-04-26
 
 ## Purpose
 
@@ -44,6 +44,15 @@ Output filename SHALL be derived from the `_RRC.nc` basename by replacing
 `_RRC.nc` with `_FAI_report.txt`.  The functions SHALL be called from Step 4
 in `CDSE_OData_Workflow_v1.ipynb`, after the GeoTIFF outputs.
 
+### REQ-FAI-007: Ocean context filter
+After area filtering, `compute_fai_patches` SHALL discard patches that are not
+surrounded by ocean.  The ocean context is determined by a uniform-filter mean
+of the full (unmasked) FAI over a `(2 × context_margin + 1)²` pixel window.
+A patch is kept only if ≥ 50% of its pixels have a local mean FAI < 0.
+`context_margin` SHALL default to 20 pixels (200 m at 10 m resolution) and be
+exposed as a configurable parameter in the Step 4 config cell.  Set to 0 to
+disable.
+
 ## Acceptance Scenarios
 
 ### SCENARIO-FAI-001: FAI threshold detection
@@ -71,14 +80,24 @@ in `CDSE_OData_Workflow_v1.ipynb`, after the GeoTIFF outputs.
 **WHEN** `compute_fai_patches` runs  
 **THEN** an empty list is returned; `write_fai_report` writes the header only (0 data rows)
 
+### SCENARIO-FAI-006: Land patches discarded by ocean context filter
+**GIVEN** connected components on land (surrounded by other positive-FAI land pixels)  
+**WHEN** `compute_fai_patches` runs with `context_margin=20`  
+**THEN** those patches are discarded (local mean FAI in their context window > 0)
+
+### SCENARIO-FAI-007: Marine algae patches retained by ocean context filter
+**GIVEN** a genuine floating algae patch surrounded by open-ocean pixels (FAI < 0)  
+**WHEN** `compute_fai_patches` runs with `context_margin=20`  
+**THEN** the patch is retained (local mean FAI in context window < 0)
+
 ## Implementation Status (2026-04-25)
 
 **Status**: Done
 
 ### What's Built
-- `compute_fai_patches(fai, mask_combined, fai_thrsh, ar_thrsh)` — mask, threshold, label, filter
+- `compute_fai_patches(fai, mask_combined, fai_thrsh, ar_thrsh, context_margin=20)` — mask, threshold, label, area filter, ocean context filter
 - `write_fai_report(patches, rrc_path, out_path, fai_thrsh, ar_thrsh)` — write text report
-- Step 4 config: `fai_thrsh`, `ar_thrsh` variables in config cell
+- Step 4 config: `fai_thrsh`, `ar_thrsh`, `context_margin` variables in config cell
 - Step 4 execution: patch detection + report writing appended after GeoTIFF outputs
 
 ### Deviations from Old Workflow

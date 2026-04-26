@@ -54,11 +54,19 @@ Output filenames SHALL be derived from the input `_RRC.nc` basename:
 ### REQ-RRC-008: SWIR-based land mask supplement
 `compute_indices` SHALL compute a land mask by thresholding the unfiltered
 SWIR band (`rhorc_1614` for S2A, `rhorc_1610` for S2B) at
-`swir_land_threshold` (default 0.035).  This mask SHALL be OR-combined with
+`swir_land_threshold` (default 0.008).  This mask SHALL be OR-combined with
 the `mask_combined` variable read from the RRC file before any indices or
 GeoTIFFs are written.  The SWIR mask is computed on the raw (pre-filter) SWIR
 to preserve sharp land/water boundaries.  The threshold is exposed as a
 configurable parameter in the Step 4 config cell.
+
+Note: In ACOLITE rhorc, the aerosol residual dominates both SWIR and NIR over
+dark ocean, causing water rhorc_SWIR to cluster around 0.004–0.009.  Dark
+rocky Arctic land (e.g. Greenland tundra) has rhorc_SWIR ≈ 0.006–0.035.  A
+threshold of 0.008 removes the bulk of land pixels while only flagging the
+most turbid coastal water (which has near-zero FAI anyway and cannot support
+macroalgae detection).  The remaining land pixels are handled by the ocean
+context filter in `compute_fai_patches` (REQ-FAI-007).
 
 ## Acceptance Scenarios
 

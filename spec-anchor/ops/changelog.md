@@ -2,6 +2,22 @@
 
 Rolling 2-week work log.
 
+## 2026-04-26 (5)
+- Bug fix: land patches still appearing in FAI report after SWIR mask
+  - Root cause: in ACOLITE rhorc, aerosol residual pushes open-water SWIR to
+    0.004–0.009 and dark rocky Arctic land starts at 0.006 — distributions
+    overlap, no single spectral threshold cleanly separates them
+  - Fix 1: lowered swir_land_threshold from 0.035 → 0.008 (removes ~72% of
+    land pixels quickly before connected-components runs)
+  - Fix 2: added ocean context filter (REQ-FAI-007) to compute_fai_patches:
+    builds a local-mean FAI context map (uniform_filter, radius=context_margin),
+    discards any patch where < 50% of pixels sit in ocean context (local mean
+    FAI < 0); land patches are surrounded by positive-FAI land, marine algae
+    patches are surrounded by negative-FAI ocean
+  - context_margin = 20 (200 m at 10 m resolution) added to Step 4 config cell
+  - Updated fai-patches spec: REQ-FAI-007, SCENARIO-FAI-006, SCENARIO-FAI-007
+  - Updated rrc-post-processing spec REQ-RRC-008 with rationale for 0.008 threshold
+
 ## 2026-04-26 (4)
 - Bug fix: land pixels appearing in FAI patch report
   - Root cause: `mask_combined` in the existing RRC file contained only the ice_bright
