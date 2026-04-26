@@ -2,6 +2,14 @@
 
 Rolling 2-week work log.
 
+## 2026-04-26 (6)
+- Bug fix: cloud mask skipped for S2A scenes — band named rhot_1375 in mask_config.yml
+  but SAFE metadata shows S2A B10 centre = 1373.5 nm → ACOLITE writes rhot_1374
+  Updated mask_config.yml: band: rhot_1374, fallback: rhot_1377 (S2B confirmed)
+  Updated masking spec REQ-MASK-001 and SCENARIO-MASK-001 with correct wavelengths
+  NOTE: the S2A scene just processed (S2A_20170710_T22WDS) has no cloud mask in its
+  RRC file — re-run Step 3 post-processing to apply the corrected mask
+
 ## 2026-04-26 (5)
 - Bug fix: land patches still appearing in FAI report after SWIR mask
   - Root cause: in ACOLITE rhorc, aerosol residual pushes open-water SWIR to

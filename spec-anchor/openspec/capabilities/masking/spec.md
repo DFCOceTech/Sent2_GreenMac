@@ -12,8 +12,10 @@ the output file or saved separately.
 
 ### REQ-MASK-001: Cloud mask
 The system SHALL compute a cloud mask by thresholding TOA reflectance at the
-cirrus band: `rhot_1375` (S2A B10) or `rhot_1377` (S2B B10).  The primary
-and fallback band names are read from `mask_config.yml`.
+cirrus band.  ACOLITE names the band from the sensor metadata centre wavelength
+rounded to the nearest integer: `rhot_1374` for S2A (centre 1373.5 nm) and
+`rhot_1377` for S2B (centre ~1376.9 nm).  Primary and fallback band names are
+read from `mask_config.yml`.
 
 ### REQ-MASK-002: Land mask
 The system SHALL compute a land mask by thresholding Rayleigh-corrected SWIR
@@ -52,7 +54,7 @@ nearest-neighbour interpolation before combining.
 ## Acceptance Scenarios
 
 ### SCENARIO-MASK-001: Cloud mask S2B fallback
-**GIVEN** an S2B L2R file where `rhot_1375` is absent but `rhot_1377` is present  
+**GIVEN** an S2B L2R file where `rhot_1374` (S2A primary) is absent but `rhot_1377` is present  
 **WHEN** `compute_cloud_mask` runs  
 **THEN** `rhot_1377` is used and a WARNING is printed; no exception is raised
 
